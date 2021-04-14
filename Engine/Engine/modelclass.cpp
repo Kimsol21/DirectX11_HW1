@@ -71,10 +71,10 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 
 	// Set the number of vertices in the vertex array.
-	m_vertexCount = 3;
+	m_vertexCount = 13;
 
 	// Set the number of indices in the index array.
-	m_indexCount = 3;
+	m_indexCount = 21;
 
 	// Create the vertex array.
 	vertices = new VertexType[m_vertexCount];
@@ -91,20 +91,66 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	}
 
 	// Load the vertex array with data.
+	//삼각형/////////////////////////////////////////////////////////////////////
 	vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[0].color = D3DXVECTOR4(0.8f, 0.2f, 0.5f, 1.0f);
 
 	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);  // Top middle.
-	vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[1].color = D3DXVECTOR4(0.8f, 0.2f, 0.5f, 1.0f);
 
 	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[2].color = D3DXVECTOR4(0.8f, 0.2f, 0.5f, 1.0f);
+
+	//사각형/////////////////////////////////////////////////////////////////////
+	vertices[3].position = D3DXVECTOR3(-4.0f, -1.0f, 0.0f);  // Bottom left.
+	vertices[3].color = D3DXVECTOR4(0.1f, 0.2f, 0.6f, 1.0f);
+
+	vertices[4].position = D3DXVECTOR3(-4.0f, 1.0f, 0.0f);  // Top left.
+	vertices[4].color = D3DXVECTOR4(0.1f, 0.2f, 0.6f, 1.0f);
+
+	vertices[5].position = D3DXVECTOR3(-2.0f, 1.0f, 0.0f);  // Top right.
+	vertices[5].color = D3DXVECTOR4(0.1f, 0.2f, 0.6f, 1.0f);
+
+	vertices[6].position = D3DXVECTOR3(-2.0f, -1.0f, 0.0f);  // Bottom right.
+	vertices[6].color = D3DXVECTOR4(0.1f, 0.2f, 0.6f, 1.0f);
+
+	//육각형/////////////////////////////////////////////////////////////////////
+	vertices[7].position = D3DXVECTOR3(2.0f, 0.0f, 0.0f);  // middle left.
+	vertices[7].color = D3DXVECTOR4(0.6f, 0.5f, 0.3f, 1.0f);
+
+	vertices[8].position = D3DXVECTOR3(2.5f, 1.0f, 0.0f);  // Top left.
+	vertices[8].color = D3DXVECTOR4(0.6f, 0.5f, 0.3f, 1.0f);
+
+	vertices[9].position = D3DXVECTOR3(3.5f, 1.0f, 0.0f);  // Top right.
+	vertices[9].color = D3DXVECTOR4(0.6f, 0.5f, 0.3f, 1.0f);
+
+	vertices[10].position = D3DXVECTOR3(4.0f, 0.0f, 0.0f);  // middle right.
+	vertices[10].color = D3DXVECTOR4(0.6f, 0.5f, 0.3f, 1.0f);
+
+	vertices[11].position = D3DXVECTOR3(3.5f, -1.0f, 0.0f);  //Bottom right.
+	vertices[11].color = D3DXVECTOR4(0.6f, 0.5f, 0.3f, 1.0f);
+
+	vertices[12].position = D3DXVECTOR3(2.5f, -1.0f, 0.0f);  // Bottom left.
+	vertices[12].color = D3DXVECTOR4(0.6f, 0.5f, 0.3f, 1.0f);
 
 	// Load the index array with data.
 	// Create the triangle in the clockwise order (counterclockwise: back face culling).
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
-	indices[2] = 2;  // Bottom right.
+	//삼각형/////////////////////////////////////////////////////////////////////////////////////
+	indices[0] = 0; indices[1] = 1; indices[2] = 2; 
+
+	//사각형/////////////////////////////////////////////////////////////////////////////////////
+	indices[3] = 3; indices[4] = 4; indices[5] = 6; 
+
+	indices[6] = 4; indices[7] = 5; indices[8] = 6;
+
+	//육각형/////////////////////////////////////////////////////////////////////////////////////
+	indices[9] = 7; indices[10] = 8; indices[11] = 9; 
+
+	indices[12] = 7; indices[13] = 9; indices[14] = 10; 
+
+	indices[15] = 7; indices[16] = 10; indices[17] = 11; 
+
+	indices[18] = 7; indices[19] = 11; indices[20] = 12;
 
 	// Set up the description of the static vertex buffer.
     vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -198,7 +244,7 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
     // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //이거 사각형일땐 다른걸로 설정해줘야함.
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); 
 
 	return;
 }

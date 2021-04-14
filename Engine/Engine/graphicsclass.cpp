@@ -158,11 +158,10 @@ void GraphicsClass::ChangeBGColor(float red, float green, float blue, float alph
 bool GraphicsClass::Render()
 {
 	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	//D3DXMATRIX triangleMatrix, squareMatrix, hexagonMatrix;
 	bool result;
 
-
 	// Clear the buffers to begin the scene.
-	//m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 	m_D3D->BeginScene(BackgroundColor[0], BackgroundColor[1], BackgroundColor[2], BackgroundColor[3] );
 
 	// Generate the view matrix based on the camera's position.
