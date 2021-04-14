@@ -36,6 +36,10 @@ public:
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Frame();
+	void ChangeBGColor(float , float , float , float );
+
+public:
+	float BackgroundColor[4];
 
 private:
 	bool Render();

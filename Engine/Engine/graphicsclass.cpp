@@ -10,6 +10,12 @@ GraphicsClass::GraphicsClass()
 	m_Camera = 0;
 	m_Model = 0;
 	m_ColorShader = 0;
+
+	BackgroundColor[0] = 0.0f; //기본 뒷배경 color값 검정으로 초기화.
+	BackgroundColor[1] = 0.0f;
+	BackgroundColor[2] = 0.0f;
+	BackgroundColor[3] = 1.0f;
+
 }
 
 
@@ -139,6 +145,15 @@ bool GraphicsClass::Frame()
 	return true;
 }
 
+void GraphicsClass::ChangeBGColor(float red, float green, float blue, float alpha)
+{
+	BackgroundColor[0] = red;
+	BackgroundColor[1] = green;
+	BackgroundColor[2] = blue;
+	BackgroundColor[3] = alpha;
+
+	return;
+}
 
 bool GraphicsClass::Render()
 {
@@ -147,7 +162,8 @@ bool GraphicsClass::Render()
 
 
 	// Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	//m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	m_D3D->BeginScene(BackgroundColor[0], BackgroundColor[1], BackgroundColor[2], BackgroundColor[3] );
 
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();

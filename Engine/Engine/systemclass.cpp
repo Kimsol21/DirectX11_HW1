@@ -133,9 +133,24 @@ bool SystemClass::Frame()
 
 
 	// Check if the user pressed escape and wants to exit the application.
-	if(m_Input->IsKeyDown(VK_ESCAPE))
+	if(m_Input->IsKeyDown(VK_ESCAPE)) //ESC키를 눌렀을때
 	{
-		return false;
+		return false; //시스템 종료
+	}
+
+	if (m_Input->IsKeyDown(0x52)) //R키를 눌렀을 때
+	{
+		m_Graphics->ChangeBGColor(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	if (m_Input->IsKeyDown(0x47)) //G키를 눌렀을 때
+	{
+		m_Graphics->ChangeBGColor(0.0f, 1.0f, 0.0f, 1.0f);
+	}
+
+	if (m_Input->IsKeyDown(0x42)) //B키를 눌렀을 때
+	{
+		m_Graphics->ChangeBGColor(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 
 	// Do the frame processing for the graphics object.
