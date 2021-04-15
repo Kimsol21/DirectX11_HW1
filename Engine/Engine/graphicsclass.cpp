@@ -11,6 +11,8 @@ GraphicsClass::GraphicsClass()
 	m_Model = 0;
 	m_ColorShader = 0;
 
+	changedBrightness = 1.0f;
+
 	BackgroundColor[0] = 0.0f; //기본 뒷배경 color값 검정으로 초기화.
 	BackgroundColor[1] = 0.0f;
 	BackgroundColor[2] = 0.0f;
@@ -78,7 +80,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_ColorShader = new ColorShaderClass;
 	if(!m_ColorShader)
 	{
-		return false;
+		return false; //여기는 문제없음
 	}
 
 	// Initialize the color shader object.
@@ -155,10 +157,17 @@ void GraphicsClass::ChangeBGColor(float red, float green, float blue, float alph
 	return;
 }
 
+void GraphicsClass::ChangeBrightness(float brightness)
+{
+	changedBrightness = brightness;
+
+	return;
+}
+
 bool GraphicsClass::Render()
 {
 	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
-	//D3DXMATRIX triangleMatrix, squareMatrix, hexagonMatrix;
+
 	bool result;
 
 	// Clear the buffers to begin the scene.
@@ -177,7 +186,7 @@ bool GraphicsClass::Render()
 
 	// Render the model using the color shader.
 	result = m_ColorShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), 
-		worldMatrix, viewMatrix, projectionMatrix);
+		worldMatrix, viewMatrix, projectionMatrix, changedBrightness);
 	if(!result)
 	{
 		return false;

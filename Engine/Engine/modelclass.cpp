@@ -48,6 +48,17 @@ void ModelClass::Shutdown()
 
 void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 {
+	rotationSpeed += 0.1f;
+	if (rotationSpeed > 7.0f)
+		rotationSpeed = 0.0f;
+
+	D3DXMatrixIdentity(&triangleMatrix);
+	D3DXMatrixRotationX(&Rotation, -rotationSpeed);
+	D3DXMatrixTranslation(&Translation, 0.0f, 0.0f, 0.0f);
+
+	triangleMatrix = Translation * Rotation;
+
+
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	RenderBuffers(deviceContext);
 
@@ -238,13 +249,13 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	offset = 0;
     
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset); //버택스 버퍼 랜더링
 
     // Set the index buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0); //인덱스 버퍼 랜더링
 
     // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); 
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //랜더링 방식
 
 	return;
 }

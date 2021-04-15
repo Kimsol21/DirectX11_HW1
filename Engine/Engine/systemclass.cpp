@@ -153,6 +153,16 @@ bool SystemClass::Frame()
 		m_Graphics->ChangeBGColor(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 
+	if (m_Input->IsKeyDown(0x31)) //1키를 눌렀을 때
+	{
+		m_Graphics->ChangeBrightness(1.0f);
+	}
+
+	if (m_Input->IsKeyDown(0x32)) //2키를 눌렀을 때
+	{
+		m_Graphics->ChangeBrightness(0.5f);
+	}
+
 	// Do the frame processing for the graphics object.
 	result = m_Graphics->Frame();
 	if(!result)

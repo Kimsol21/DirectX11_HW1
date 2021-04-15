@@ -37,9 +37,11 @@ public:
 	void Shutdown();
 	bool Frame();
 	void ChangeBGColor(float , float , float , float );
+	void ChangeBrightness(float brightness);
 
 public:
 	float BackgroundColor[4];
+	float changedBrightness;
 
 private:
 	bool Render();
