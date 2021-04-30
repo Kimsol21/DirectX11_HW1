@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 ﻿  graphicsclass.cpp
+=======
+﻿  systemclass.cpp
+>>>>>>> parent of 3d3856c (Change the color brightness)
   Engine.vcxproj -> C:\Users\admin\DirectX11_HW1\Engine\Debug\Engine.exe

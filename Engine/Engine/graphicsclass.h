@@ -37,6 +37,7 @@ public:
 	void Shutdown();
 	bool Frame();
 	void ChangeBGColor(float , float , float , float );
+<<<<<<< HEAD
 	void ChangeBrightness(float brightness);
 	void ChangeFillMode(D3D11_FILL_MODE fillMode);
 
@@ -46,6 +47,11 @@ public:
 	HWND m_hwnd;
 	int m_screenwidth;
 	int m_screenheight;
+=======
+
+public:
+	float BackgroundColor[4];
+>>>>>>> parent of 3d3856c (Change the color brightness)
 
 private:
 	bool Render(float);

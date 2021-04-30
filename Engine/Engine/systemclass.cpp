@@ -160,6 +160,7 @@ bool SystemClass::Frame()
 		m_Graphics->ChangeBGColor(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 
+<<<<<<< HEAD
 	if (m_Input->IsKeyDown(0x31)) //1키를 눌렀을 때
 	{
 		m_Graphics->ChangeBrightness(1.0f);
@@ -180,6 +181,8 @@ bool SystemClass::Frame()
 		m_Graphics->ChangeFillMode(D3D11_FILL_SOLID);
 	}
 
+=======
+>>>>>>> parent of 3d3856c (Change the color brightness)
 	// Do the frame processing for the graphics object.
 	result = m_Graphics->Frame();
 	if(!result)

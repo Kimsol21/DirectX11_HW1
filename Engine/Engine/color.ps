@@ -2,10 +2,6 @@
 // Filename: color.ps
 ////////////////////////////////////////////////////////////////////////////////
 
-cbuffer PixelShaderBuffer
-{
-	float brightness;
-};
 
 //////////////
 // TYPEDEFS //
@@ -24,5 +20,5 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 float4 ColorPixelShader(PixelInputType input) : SV_TARGET
 {
-    return input.color*brightness;
+    return input.color;
 }

@@ -11,8 +11,6 @@ GraphicsClass::GraphicsClass()
 	m_Model = 0;
 	m_ColorShader = 0;
 
-	changedBrightness = 1.0f;
-
 	BackgroundColor[0] = 0.0f; //기본 뒷배경 color값 검정으로 초기화.
 	BackgroundColor[1] = 0.0f;
 	BackgroundColor[2] = 0.0f;
@@ -83,7 +81,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, D3D
 	m_ColorShader = new ColorShaderClass;
 	if(!m_ColorShader)
 	{
+<<<<<<< HEAD
 		return false; 
+=======
+		return false;
+>>>>>>> parent of 3d3856c (Change the color brightness)
 	}
 
 	// Initialize the color shader object.
@@ -165,6 +167,7 @@ void GraphicsClass::ChangeBGColor(float red, float green, float blue, float alph
 	return;
 }
 
+<<<<<<< HEAD
 void GraphicsClass::ChangeBrightness(float brightness)
 {
 	changedBrightness = brightness;
@@ -185,6 +188,12 @@ bool GraphicsClass::Render(float rotation)
 	D3DXMATRIX scaleMatrix;
 	D3DXMATRIX* m_worldMatrix;
 
+=======
+bool GraphicsClass::Render()
+{
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	//D3DXMATRIX triangleMatrix, squareMatrix, hexagonMatrix;
+>>>>>>> parent of 3d3856c (Change the color brightness)
 	bool result;
 
 	// Clear the buffers to begin the scene.
@@ -235,7 +244,12 @@ bool GraphicsClass::Render(float rotation)
 	//m_Model->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the color shader.
+<<<<<<< HEAD
 	
+=======
+	result = m_ColorShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), 
+		worldMatrix, viewMatrix, projectionMatrix);
+>>>>>>> parent of 3d3856c (Change the color brightness)
 	if(!result)
 	{
 		return false;

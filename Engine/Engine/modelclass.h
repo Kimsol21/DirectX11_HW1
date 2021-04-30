@@ -35,14 +35,6 @@ public:
 
 	int GetIndexCount();
 
-public:
-	D3DXMATRIX triangleMatrix, squareMatrix, hexagonMatrix;
-	D3DXMATRIX Rotation; //회전 매트릭스
-	D3DXMATRIX Scale; //스케일 매트릭스
-	D3DXMATRIX Translation; //트랜스래이션 매트릭스
-	D3DXMATRIX WVP; //WVP
-	float rotationSpeed = 0.01f; //로테이션 스피드
-
 private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();

@@ -10,8 +10,6 @@ ColorShaderClass::ColorShaderClass()
 	m_pixelShader = 0;
 	m_layout = 0;
 	m_matrixBuffer = 0;
-
-	m_pixelShaderBuffer = 0;
 }
 
 
@@ -24,13 +22,14 @@ ColorShaderClass::~ColorShaderClass()
 {
 }
 
+
 bool ColorShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
 
 
 	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, L"../Engine/color.vs", L"../Engine/color.ps"); //문제발견
+	result = InitializeShader(device, hwnd, L"../Engine/color.vs", L"../Engine/color.ps");
 
 	if(!result)
 	{
@@ -52,12 +51,13 @@ void ColorShaderClass::Shutdown()
 // This first sets the parameters inside the shader, and then draws the triangle 
 // using the HLSL shader.
 bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, 
-	D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, float brightness)
+	D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
 {
 	bool result;
 
+
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, brightness);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
 	if(!result)
 	{
 		return false;
@@ -83,9 +83,8 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd,
 	ID3D10Blob* pixelShaderBuffer;
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	unsigned int numElements;
-
 	D3D11_BUFFER_DESC matrixBufferDesc;
-	D3D11_BUFFER_DESC pixelShaderBufferDesc;
+
 
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
@@ -139,13 +138,13 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd,
 	}
 
     // Create the pixel shader from the buffer.
-    result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), //여기는 문제 없음.
-		pixelShaderBuffer->GetBufferSize() , NULL, &m_pixelShader);
+    result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), 
+		pixelShaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
 	if(FAILED(result))
 	{
 		return false;
 	}
-	
+
 	// Create the vertex input layout description that will be processed by the shader.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
 	// The AlignedByteOffset indicates how the data is spaced in the buffer: 12 bytes for 
@@ -193,24 +192,9 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd,
     matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
 
-	// 똑같이 픽셀쉐이더 버퍼 정보 써주기.
-	pixelShaderBufferDesc.Usage = D3D11_USAGE_DYNAMIC;				// The buffer is updated each frame.
-	pixelShaderBufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	pixelShaderBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	pixelShaderBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	// Writing data by CPU
-	pixelShaderBufferDesc.MiscFlags = 0;
-	pixelShaderBufferDesc.StructureByteStride = 0;
-
 	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	result = device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
 	if(FAILED(result))
-	{
-		return false;
-	}
-
-	//여기도 똑같이 버퍼 만들어주기.
-	result = device->CreateBuffer(&pixelShaderBufferDesc, NULL, &m_pixelShaderBuffer);
-	if (FAILED(result))
 	{
 		return false;
 	}
@@ -226,14 +210,6 @@ void ColorShaderClass::ShutdownShader()
 	{
 		m_matrixBuffer->Release();
 		m_matrixBuffer = 0;
-	}
-
-	//여기도 똑같이 해제해주기.
-	// Release the matrix constant buffer.
-	if (m_pixelShaderBuffer)
-	{
-		m_pixelShaderBuffer->Release();
-		m_pixelShaderBuffer = 0;
 	}
 
 	// Release the layout.
@@ -299,14 +275,13 @@ void ColorShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 // The sets up the global variables in the shader. The transfom matrices are sent into the 
 // vertex shader during the Render function call.
 bool ColorShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
-	D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, float brightness)
+	D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
 {
 	HRESULT result;
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	unsigned int bufferNumber;
 
-	PixelShaderBufferType* dataPtr2;
 
 	// Transpose the matrices to prepare them for the shader.
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
@@ -336,26 +311,6 @@ bool ColorShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 
 	// Finanly set the constant buffer in the vertex shader with the updated values.
     deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
-
-	//픽셀쉐이더 설정////////////////////////////////////////////////////////
-	result = deviceContext->Map(m_pixelShaderBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(result))
-	{
-		return false;
-	}
-	
-	// Get a pointer to the data in the constant buffer.
-	dataPtr2 = (PixelShaderBufferType*)mappedResource.pData;
-
-	dataPtr2->brightness = brightness;
-
-	deviceContext->Unmap(m_pixelShaderBuffer, 0);
-
-	// Set the position of the constant buffer in the vertex shader.
-	bufferNumber = 0;
-
-	// Finanly set the constant buffer in the vertex shader with the updated values.
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pixelShaderBuffer);
 
 	return true;
 }
