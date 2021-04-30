@@ -33,18 +33,22 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 
-	bool Initialize(int, int, HWND);
+	bool Initialize(int, int, HWND, D3D11_FILL_MODE);
 	void Shutdown();
 	bool Frame();
 	void ChangeBGColor(float , float , float , float );
 	void ChangeBrightness(float brightness);
+	void ChangeFillMode(D3D11_FILL_MODE fillMode);
 
 public:
 	float BackgroundColor[4];
 	float changedBrightness;
+	HWND m_hwnd;
+	int m_screenwidth;
+	int m_screenheight;
 
 private:
-	bool Render();
+	bool Render(float);
 
 private:
 	D3DClass* m_D3D;

@@ -48,17 +48,6 @@ void ModelClass::Shutdown()
 
 void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 {
-	rotationSpeed += 0.1f;
-	if (rotationSpeed > 7.0f)
-		rotationSpeed = 0.0f;
-
-	D3DXMatrixIdentity(&triangleMatrix);
-	D3DXMatrixRotationX(&Rotation, -rotationSpeed);
-	D3DXMatrixTranslation(&Translation, 0.0f, 0.0f, 0.0f);
-
-	triangleMatrix = Translation * Rotation;
-
-
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	RenderBuffers(deviceContext);
 
@@ -82,10 +71,10 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 
 	// Set the number of vertices in the vertex array.
-	m_vertexCount = 13;
+	m_vertexCount = 15;
 
 	// Set the number of indices in the index array.
-	m_indexCount = 21;
+	m_indexCount = 27;
 
 	// Create the vertex array.
 	vertices = new VertexType[m_vertexCount];
@@ -102,15 +91,21 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	}
 
 	// Load the vertex array with data.
-	//삼각형/////////////////////////////////////////////////////////////////////
-	vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
+	//오각형/////////////////////////////////////////////////////////////////////
+	vertices[0].position = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);  // Bottom left.
 	vertices[0].color = D3DXVECTOR4(0.8f, 0.2f, 0.5f, 1.0f);
 
 	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);  // Top middle.
 	vertices[1].color = D3DXVECTOR4(0.8f, 0.2f, 0.5f, 1.0f);
 
-	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
+	vertices[2].position = D3DXVECTOR3(1.0f, 0.0f, 0.0f);  // Bottom right.
 	vertices[2].color = D3DXVECTOR4(0.8f, 0.2f, 0.5f, 1.0f);
+
+	vertices[13].position = D3DXVECTOR3(0.5f, -1.0f, 0.0f);  // Top middle.
+	vertices[13].color = D3DXVECTOR4(0.8f, 0.2f, 0.5f, 1.0f);
+
+	vertices[14].position = D3DXVECTOR3(-0.5f, -1.0f, 0.0f);  // Bottom right.
+	vertices[14].color = D3DXVECTOR4(0.8f, 0.2f, 0.5f, 1.0f);
 
 	//사각형/////////////////////////////////////////////////////////////////////
 	vertices[3].position = D3DXVECTOR3(-4.0f, -1.0f, 0.0f);  // Bottom left.
@@ -146,22 +141,26 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	// Load the index array with data.
 	// Create the triangle in the clockwise order (counterclockwise: back face culling).
-	//삼각형/////////////////////////////////////////////////////////////////////////////////////
+	//오각형/////////////////////////////////////////////////////////////////////////////////////
 	indices[0] = 0; indices[1] = 1; indices[2] = 2; 
 
-	//사각형/////////////////////////////////////////////////////////////////////////////////////
-	indices[3] = 3; indices[4] = 4; indices[5] = 6; 
+	indices[3] = 0; indices[4] = 2; indices[5] = 13;
 
-	indices[6] = 4; indices[7] = 5; indices[8] = 6;
+	indices[6] = 0; indices[7] = 13; indices[8] = 14;
+
+	//사각형/////////////////////////////////////////////////////////////////////////////////////
+	indices[9] = 3; indices[10] = 4; indices[11] = 6; 
+
+	indices[12] = 4; indices[13] = 5; indices[14] = 6;
 
 	//육각형/////////////////////////////////////////////////////////////////////////////////////
-	indices[9] = 7; indices[10] = 8; indices[11] = 9; 
+	indices[15] = 7; indices[16] = 8; indices[17] = 9; 
 
-	indices[12] = 7; indices[13] = 9; indices[14] = 10; 
+	indices[18] = 7; indices[19] = 9; indices[20] = 10; 
 
-	indices[15] = 7; indices[16] = 10; indices[17] = 11; 
+	indices[21] = 7; indices[22] = 10; indices[23] = 11; 
 
-	indices[18] = 7; indices[19] = 11; indices[20] = 12;
+	indices[24] = 7; indices[25] = 11; indices[26] = 12;
 
 	// Set up the description of the static vertex buffer.
     vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;

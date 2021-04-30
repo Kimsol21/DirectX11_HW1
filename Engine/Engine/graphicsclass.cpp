@@ -31,10 +31,13 @@ GraphicsClass::~GraphicsClass()
 }
 
 
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, D3D11_FILL_MODE fillMode)
 {
 	bool result;
 
+	m_hwnd = hwnd;
+	m_screenwidth = screenWidth;
+	m_screenheight = screenHeight;
 
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
@@ -44,7 +47,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the Direct3D object.
-	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR, fillMode);
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
@@ -80,7 +83,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_ColorShader = new ColorShaderClass;
 	if(!m_ColorShader)
 	{
-		return false; //여기는 문제없음
+		return false; 
 	}
 
 	// Initialize the color shader object.
@@ -136,9 +139,14 @@ bool GraphicsClass::Frame()
 {
 	bool result;
 
+	static float rotation = 0.0f;
+
+	rotation += (float)D3DX_PI * 0.01f;
+	if (rotation > 360.0f)
+		rotation -= 360.0f;
 
 	// Render the graphics scene.
-	result = Render();
+	result = Render(rotation);
 	if(!result)
 	{
 		return false;
@@ -164,9 +172,18 @@ void GraphicsClass::ChangeBrightness(float brightness)
 	return;
 }
 
-bool GraphicsClass::Render()
+void GraphicsClass::ChangeFillMode(D3D11_FILL_MODE fillMode)
 {
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	Initialize(m_screenwidth, m_screenheight, m_hwnd, fillMode);
+	return;
+}
+
+bool GraphicsClass::Render(float rotation)
+{
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;	
+	D3DXMATRIX transformMatrix;
+	D3DXMATRIX scaleMatrix;
+	D3DXMATRIX* m_worldMatrix;
 
 	bool result;
 
@@ -181,12 +198,44 @@ bool GraphicsClass::Render()
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Model->Render(m_D3D->GetDeviceContext());
+	m_worldMatrix = new D3DXMATRIX[3]; //도형 수만큼 매트릭스 생성해주기.
+	if (!m_worldMatrix)
+	{
+		return false;
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		m_worldMatrix[i] = worldMatrix;
+	}
+	D3DXMatrixRotationX(&m_worldMatrix[0], rotation);
+	D3DXMatrixTranslation(&transformMatrix, -2, 0, 0);
+	D3DXMatrixScaling(&scaleMatrix, 1, 1, 1);
+	m_worldMatrix[0] *= transformMatrix * scaleMatrix;
+
+	D3DXMatrixRotationY(&m_worldMatrix[1], rotation);
+	D3DXMatrixTranslation(&transformMatrix, 0, 0, 0);
+	D3DXMatrixScaling(&scaleMatrix, 1, 1, 1);
+	m_worldMatrix[1] *= transformMatrix * scaleMatrix;
+
+	D3DXMatrixRotationZ(&m_worldMatrix[2], rotation);
+	D3DXMatrixTranslation(&transformMatrix, 2, 0, 0);
+	D3DXMatrixScaling(&scaleMatrix, 1, 1, 1);
+	m_worldMatrix[2] *= transformMatrix * scaleMatrix;
+
+	for (int i = 0; i < 3; i++)
+	{
+		worldMatrix = m_worldMatrix[i];
+		m_Model[i].Render(m_D3D->GetDeviceContext());
+
+		result = m_ColorShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(),
+			worldMatrix, viewMatrix, projectionMatrix, changedBrightness);
+	}
+
+	//m_Model->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_ColorShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), 
-		worldMatrix, viewMatrix, projectionMatrix, changedBrightness);
+	
 	if(!result)
 	{
 		return false;

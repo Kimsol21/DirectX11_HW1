@@ -8,6 +8,7 @@ SystemClass::SystemClass()
 {
 	m_Input = 0;
 	m_Graphics = 0;
+	m_D3DClass = 0;
 }
 
 
@@ -52,8 +53,14 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, D3D11_FILL_SOLID);
 	if(!result)
+	{
+		return false;
+	}
+
+	m_D3DClass = new D3DClass;
+	if (!m_D3DClass)
 	{
 		return false;
 	}
@@ -161,6 +168,16 @@ bool SystemClass::Frame()
 	if (m_Input->IsKeyDown(0x32)) //2키를 눌렀을 때
 	{
 		m_Graphics->ChangeBrightness(0.5f);
+	}
+
+	if (m_Input->IsKeyDown(0x57)) //W키를 눌렀을 때
+	{
+		m_Graphics->ChangeFillMode(D3D11_FILL_WIREFRAME);
+	}
+
+	if (m_Input->IsKeyDown(0x53)) //S키를 눌렀을 때
+	{
+		m_Graphics->ChangeFillMode(D3D11_FILL_SOLID);
 	}
 
 	// Do the frame processing for the graphics object.
@@ -283,7 +300,6 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 
 	return;
 }
-
 
 void SystemClass::ShutdownWindows()
 {
